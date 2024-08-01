@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Picker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .datepicker {
+    position: absolute;
+    background-color: #e6ffff;
+    border: 1px solid #006666;
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+  }
+  
+  .datepicker header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .datepicker header button {
+    background-color: #009999;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .datepicker header select {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .datepicker table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .datepicker th, .datepicker td {
+    text-align: center;
+    padding: 5px;
+  }
+  
+  .datepicker td {
+    cursor: pointer;
+  }
+  
+  .datepicker td:hover {
+    background-color: #ccffff;
+  }
+  
+  .selected {
+    background-color: #009999;
+    color: white;
+  }
+</style>
+</head>
+<body>
+<input type="text" id="dateInput" style="width: 250px;" readonly required="required">
+<div class="datepicker" id="datepicker"></div>
+
+<script>
+  function createDatePicker() {
+    const datePicker = document.getElementById('datepicker');
+    const dateInput = document.getElementById('dateInput');
+    const yearSelect = document.createElement('select');
+    
+    let currentDate = new Date();
+    let selectedDate = currentDate;
+
+    function renderCalendar(year, month) {
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      
+      let table = '<header>';
+      table += '<button id="prevMonth">&lt;</button>';
+      table += `<select id="yearSelect">${generateYearOptions(year)}</select>`;
+      table += `<div>${months[month]}</div>`;
+      table += '<button id="nextMonth">&gt;</button></header>';
+      table += '<table><tr>';
+      
+      daysOfWeek.forEach(day => {
+        table += `<th>${day}</th>`;
+      });
+      
+      table += '</tr><tr>';
+      
+      for (let i = 0; i < firstDayIndex; i++) {
+        table += '<td></td>';
+      }
+      
+      for (let i = 1; i <= totalDays; i++) {
+        let cls = '';
+        if (year === selectedDate.getFullYear() && month === selectedDate.getMonth() && i === selectedDate.getDate()) {
+          cls = 'selected';
+        }
+        table += `<td class="${cls}">${i}</td>`;
+        if ((i + firstDayIndex) % 7 === 0) {
+          table += '</tr><tr>';
+        }
+      }
+      
+      table += '</tr></table>';
+      datePicker.innerHTML = table;
+
+      // Add event listeners for next and previous buttons
+      document.getElementById('prevMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+      });
+      document.getElementById('nextMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+      });
+
+      // Add event listener for year selection
+      document.getElementById('yearSelect').addEventListener('change', (e) => {
+        currentDate.setFullYear(parseInt(e.target.value));
+        renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+      });
+      
+      // Add event listener for date selection
+      const dateCells = datePicker.querySelectorAll('td');
+      dateCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+          const day = parseInt(cell.textContent);
+          selectedDate = new Date(year, month, day);
+          dateInput.value = formatDate(selectedDate);
+          yearSelect.value = selectedDate.getFullYear();
+          datePicker.style.display = 'none';
+          updateValue();
+        });
+      });
+    }
+    
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    function generateYearOptions(selectedYear) {
+      let options = '';
+      const currentYear = new Date().getFullYear();
+      for (let year = currentYear; year <= currentYear + 100; year++) {
+        options += `<option value="${year}" ${year === selectedYear ? 'selected' : ''}>${year}</option>`;
+      }
+      return options;
+    }
+
+    dateInput.addEventListener('click', () => {
+      datePicker.style.display = 'block';
+      renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
+
+    // Initially render the calendar
+    renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+  }
+
+  createDatePicker();
+</script>
+</body>
+</html>
