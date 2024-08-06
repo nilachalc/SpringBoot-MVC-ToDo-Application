@@ -2,10 +2,6 @@ package com.springboot.todo.springbootmvctodoapp.controller;
 
 import java.util.Locale;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,6 +15,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.springboot.todo.springbootmvctodoapp.bean.ToDoUser;
 import com.springboot.todo.springbootmvctodoapp.service.LogInService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @SessionAttributes({"loggedinUserName", "loggedinUserId"})
 @Controller

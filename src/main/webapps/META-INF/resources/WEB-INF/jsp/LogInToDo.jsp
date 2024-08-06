@@ -10,7 +10,7 @@
 	<body>
 	<p class="text-danger"><b>${ ErrorMessage }</b></p>
 	<div class="container">
-		<form action="/todo-login?lang=de" method="post">
+		<form action="/todo-login" method="post">
 		<table class="table table-striped" >
 			<tr>
 			  <th colspan="2" class="lead" style="background-color: aqua;">:: <sp:message code="todo.loginPageCaption" /> :: </th>

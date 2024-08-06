@@ -2,8 +2,6 @@ package com.springboot.todo.springbootmvctodoapp.controller;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,11 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.springboot.todo.springbootmvctodoapp.bean.ToDo;
 import com.springboot.todo.springbootmvctodoapp.service.ToDoService;
 
+import jakarta.validation.Valid;
+
 @Controller
 public class ToDoController {
 	
 	@Autowired
 	private ToDoService toDoService;
+	
+	@RequestMapping(value = "/welCome-ToDo", method = RequestMethod.GET)
+	public String goToWelComePage(@RequestParam int loggedinUserId, ModelMap model) {
+		List<ToDo> toDosForLoggedInUser = toDoService.fetchAllToDosForLoggedInUser(loggedinUserId);
+		model.put("allToDos", toDosForLoggedInUser);
+		return "WelComeToDo";
+	}
 	
 	@RequestMapping(value = "/delete-ToDo")
 	public String deleteToDosForLoggedInUser(@RequestParam int toDoId, @RequestParam int loggedinUserId, ModelMap model) {
